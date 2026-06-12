@@ -7,8 +7,7 @@ app = Flask(__name__)
 def noticias():
     feeds = {
         "La Nación": "https://www.nacion.com/rss/",
-        "BBC Mundo": "https://feeds.bbci.co.uk/mundo/rss.xml",
-        "CNN en Español": "http://rss.cnn.com/rss/edition_espanol.rss"
+        "BBC Mundo": "https://feeds.bbci.co.uk/mundo/rss.xml"
     }
 
     all_headlines = {}
@@ -19,7 +18,9 @@ def noticias():
             if feed.bozo:  # error al parsear
                 all_headlines[name] = ["Error al leer feed"]
             else:
-                headlines = [entry.title for entry in feed.entries[:3]]
+                # Para BBC Mundo tomamos 4 titulares, para La Nación 3
+                limit = 4 if name == "BBC Mundo" else 3
+                headlines = [entry.title for entry in feed.entries[:limit]]
                 if headlines:
                     all_headlines[name] = headlines
                 else:
