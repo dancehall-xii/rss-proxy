@@ -14,9 +14,18 @@ def noticias():
     all_headlines = {}
 
     for name, url in feeds.items():
-        feed = feedparser.parse(url)
-        headlines = [entry.title for entry in feed.entries[:3]]
-        all_headlines[name] = headlines
+        try:
+            feed = feedparser.parse(url)
+            if feed.bozo:  # si hubo error al parsear
+                all_headlines[name] = ["Error al leer feed"]
+            else:
+                headlines = [entry.title for entry in feed.entries[:3]]
+                if headlines:
+                    all_headlines[name] = headlines
+                else:
+                    all_headlines[name] = ["Sin titulares disponibles"]
+        except Exception as e:
+            all_headlines[name] = [f"Error: {str(e)}"]
 
     return jsonify(all_headlines)
 
